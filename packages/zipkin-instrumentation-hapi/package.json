@@ -1,0 +1,25 @@
+{
+  "name": "zipkin-instrumentation-hapi",
+  "version": "0.19.1",
+  "description": "Hapi middleware for instrumentation with Zipkin.js",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "babel src -d lib",
+    "test": "mocha --exit --require ../../test/helper.js --require @babel/register",
+    "test-debug": "mocha --inspect-brk --exit --require ../../test/helper.js",
+    "prepublish": "npm run build"
+  },
+  "author": "OpenZipkin <openzipkin.alt@gmail.com>",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/openzipkin/zipkin-js",
+  "peerDependencies": {
+    "@types/hapi": "^17.0.10"
+  },
+  "dependencies": {
+    "zipkin": "^0.19.1"
+  },
+  "devDependencies": {
+    "@types/hapi": "^18.0.2",
+    "hapi": "^18.1.0"
+  }
+}

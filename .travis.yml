@@ -1,0 +1,103 @@
+language: node_js
+dist: trusty
+sudo: required
+
+matrix:
+  include:
+    - node_js: 8
+      env:
+        - CXX=clang-3.6
+        - KAFKA_PLEASE_LOG=verbose
+        - TEST_SUITE=nodejs
+
+    - name: 'browser'
+      node_js: 8
+      env:
+        - CXX=clang-3.6
+        - TEST_SUITE=browser
+      addons:
+        chrome: stable
+        
+    - node_js: 9
+      env:
+        - CXX=clang-3.6
+        - KAFKA_PLEASE_LOG=verbose
+        - TEST_SUITE=nodejs
+
+    - name: 'browser'
+      node_js: 9
+      env:
+        - CXX=clang-3.6
+        - TEST_SUITE=browser
+      addons:
+        chrome: stable
+        
+    - node_js: 10
+      env:
+        - CXX=clang-3.6
+        - KAFKA_PLEASE_LOG=verbose
+        - TEST_SUITE=nodejs
+
+    - name: 'browser'
+      node_js: 10
+      env:
+        - CXX=clang-3.6
+        - TEST_SUITE=browser
+      addons:
+        chrome: stable
+
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/1.24.0/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 0.27.5
+  - export PATH="$HOME/.yarn/bin:$PATH"
+
+install:
+  - yarn install
+
+script:
+  - yarn lint
+  - yarn test
+
+services:
+  - memcached
+  - redis
+  - postgresql
+  - docker
+
+compiler: clang-3.6
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      #- llvm-toolchain-precise-3.7
+    packages:
+      - libgnome-keyring-dev
+      #- clang-3.7
+      - clang
+
+before_deploy:
+  - yarn install
+  - git checkout yarn.lock
+  - echo "//registry.npmjs.org/:_authToken=\${NPM_AUTH_TOKEN}" >> $HOME/.npmrc 2> /dev/null
+
+deploy:
+  provider: script
+  script: "yarn lerna-publish-ci"
+  skip_cleanup: true
+  on:
+    branch: master
+    node: "9"
+    tags: false
+    condition: $TEST_SUITE = "nodejs"
+
+notifications:
+  webhooks:
+    urls:
+      - https://webhooks.gitter.im/e/ead3c37d57527214e9f2
+      - https://webhooks.gitter.im/e/e57478303f87ecd7bffc
+    on_success: change
+    on_failure: always

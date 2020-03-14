@@ -1,0 +1,18 @@
+{
+  "name": "zipkin-context-cls",
+  "version": "0.19.0",
+  "description": "A Context API implementation that uses continuation-local-storage under the hood",
+  "main": "lib/CLSContext.js",
+  "scripts": {
+    "build": "babel src -d lib",
+    "test": "mocha --exit --require ../../test/helper.js",
+    "test-debug": "mocha --inspect-brk --require ../../test/helper.js",
+    "prepublish": "npm run build"
+  },
+  "author": "OpenZipkin <openzipkin.alt@gmail.com>",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/openzipkin/zipkin-js",
+  "dependencies": {
+    "continuation-local-storage": "^3.1.7"
+  }
+}
